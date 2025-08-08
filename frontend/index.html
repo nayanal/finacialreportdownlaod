@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Financial Reports Download</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+      justify-content: center;
+    }
+
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    .card {
+      background-color: white;
+      padding: 40px;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .btn {
+      display: inline-block;
+      margin: 10px;
+      padding: 12px 24px;
+      font-size: 16px;
+      color: #fff;
+      background-color: #007BFF;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .btn:hover {
+      background-color: #0056b3;
+    }
+
+    .status {
+      margin-top: 20px;
+      font-size: 14px;
+      color: #28a745;
+    }
+
+    .error {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h1>Download Financial Reports</h1>
+    <button class="btn" onclick="download('http://10.176.30.213:3000/report-pdf', 'financial_report.pdf')">
+      📄 Download PDF
+    </button>
+    <button class="btn" onclick="download('http://10.176.30.213:3000/report-excel', 'financial_report.xlsx')">
+      📊 Download Excel
+    </button>
+    <div id="status" class="status"></div>
+  </div>
+
+  <script>
+    async function download(endpoint, filename) {
+      const status = document.getElementById('status');
+      status.textContent = 'Preparing download...';
+      status.classList.remove('error');
+
+      try {
+        const response = await fetch(endpoint);
+
+        if (!response.ok) {
+          throw new Error('Download failed');
+        }
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+
+        status.textContent = `✅ ${filename} downloaded successfully.`;
+      } catch (err) {
+        status.textContent = '❌ Error downloading file.';
+        status.classList.add('error');
+      }
+    }
+  </script>
+</body>
+</html>
